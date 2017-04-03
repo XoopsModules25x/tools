@@ -10,7 +10,7 @@
  * The following code inserted in the template
  *  
  * @param module string module dirname
- * @param file  string block funciton file
+ * @param file  string block function file
  * @param show_func string show block function
  * @param options= string show block function's option
  * @param template string show block function's template
@@ -27,17 +27,18 @@
     user=admin
 }>
 */
-function smarty_function_xoBlk( $params, &$smarty ) 
+function smarty_function_xoBlk( $params, $smarty )
 {
+    /** @var Smarty $smarty */
     $old_caching = $smarty->caching;
     $old_cache_lifetime = $smarty->cache_lifetime;
     if (isset($params['cachetime'])) {
         $smarty->caching = 2;
-        $smarty->cache_lifetime = intval($params['cachetime']);
+        $smarty->cache_lifetime = (int)$params['cachetime'];
     } else {
         $smarty->caching = 0;
     }
-    $tplName = "db:".$params['template'];
+    $tplName = 'db:' . $params['template'];
     $params['cacheid'] = isset($params['cacheid']) ? $params['cacheid'] : 'xoBlk_'.md5(var_export($params, true));
     if (!isset($params['cachetime']) || !$smarty->is_cached($tplName, $params['cacheid'])) {
         $myBlock = array(
@@ -58,4 +59,3 @@ function smarty_function_xoBlk( $params, &$smarty )
     $smarty->caching = $old_caching;
     $smarty->cache_lifetime = $old_cache_lifetime;
 }
-?>

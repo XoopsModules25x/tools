@@ -10,7 +10,7 @@
  * The following code inserted in the template
  *  
  * @param module string module dirname
- * @param file  string block funciton file
+ * @param file  string block function file
  * @param show_func string show block function
  * @param options= string show block function's option
  * @param cachetime int  cachetime Unit for seconds 
@@ -27,10 +27,11 @@
     </div>
 <{/xoBlkTpl}>
 */
-function smarty_block_xoBlkTpl ($params, $content, &$smarty, &$repeat) {
+function smarty_block_xoBlkTpl ($params, $content, $smarty, &$repeat) {
     static $old_block;
+    /** @var Smarty $smarty */
     if (empty($content)) {
-        xoops_load("cache");
+        xoops_load('xoopscache');
         $cache_key = 'xoBlkTpl_'.md5(var_export($params, true));
         if (!isset($params['cachetime']) || (!$var = XoopsCache::read($cache_key))) {
             $myBlock = array(
@@ -43,7 +44,7 @@ function smarty_block_xoBlkTpl ($params, $content, &$smarty, &$repeat) {
             $var = $xoBlk->buildBlock();
         }
         if (isset($params['cachetime'])) {
-            XoopsCache::write($cache_key, $var, intval($params['cachetime']));
+            XoopsCache::write($cache_key, $var, (int)$params['cachetime']);
         }
         $old_block = $smarty->get_template_vars('block');
         $smarty->assign('block', $var);
@@ -52,4 +53,4 @@ function smarty_block_xoBlkTpl ($params, $content, &$smarty, &$repeat) {
         $smarty->assign('block', $old_block);
     }
 }
-?>
+
