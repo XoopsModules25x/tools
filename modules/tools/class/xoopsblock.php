@@ -3,28 +3,30 @@
  * tools Module for XOOPS
  *
  * You may not change or alter any portion of this comment or credits
- * of supporting developers from this source code or any supporting source code 
+ * of supporting developers from this source code or any supporting source code
  * which is considered copyrighted (c) material of the original comment or credit authors.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * @copyright       The XOOPS Project http://sourceforge.net/projects/xoops/
+ * @copyright       XOOPS Project (http://xoops.org)
  * @license         http://www.fsf.org/copyleft/gpl.html GNU public license
  * @package         tools
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
- * @version         $Id$
  */
 
-if (!defined("XOOPS_ROOT_PATH")) {
-    die("XOOPS root path not defined");
-}
+defined('XOOPS_ROOT_PATH') || exit('XOOPS Root Path not defined');
 
+/**
+ * Class ToolsXoopsBlock
+ */
 class ToolsXoopsBlock extends XoopsObject
 {
-
-    function __construct()
+    /**
+     * ToolsXoopsBlock constructor.
+     */
+    public function __construct()
     {
         $this->initVar('bid', XOBJ_DTYPE_INT, null, false);
         $this->initVar('mid', XOBJ_DTYPE_INT, 0, false);
@@ -55,19 +57,20 @@ class ToolsXoopsBlock extends XoopsObject
         $this->initVar('template', XOBJ_DTYPE_OTHER, null, false);
         $this->initVar('bcachetime', XOBJ_DTYPE_INT, 0, false);
         $this->initVar('last_modified', XOBJ_DTYPE_INT, 0, false);
-
     }
-    function ToolsXoopsBlock()
-    {
-        $this->__construct();
-    }
-   
 }
+
+/**
+ * Class ToolsXoopsBlockHandler
+ */
 class ToolsXoopsBlockHandler extends XoopsPersistableObjectHandler
 {
-    function __construct(&$db)
+    /**
+     * ToolsXoopsBlockHandler constructor.
+     * @param null|\XoopsDatabase $db
+     */
+    public function __construct($db)
     {
-        parent::__construct($db, "newblocks", "ToolsXoopsBlock", "bid", 'name');
+        parent::__construct($db, 'newblocks', 'ToolsXoopsBlock', 'bid', 'name');
     }
 }
-?>
