@@ -1,0 +1,92 @@
+div.form-nav {
+	height: 29px;
+	border-bottom: 3px solid #0058b2;
+	margin-bottom: 5px;
+	padding: 10px 0 4px 0;
+	background: #F2F2F2;
+}
+div.form-nav ul li {
+	height: 29px;
+	float: left;
+	background-image: url(step_arrow.gif);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 29px;
+	list-style: none;
+}
+div.form-nav ul li a{
+	color: #fff;
+}
+div.form-nav ul li.first {
+	background-position: 0 0;
+	padding-right: 30px;
+	padding-left: 8px;
+}
+div.form-nav ul li.first-current {
+	background-position: 0 -150px;
+	padding-right: 30px;
+	font-size: 16px;
+	padding-left: 8px;
+}
+div.form-nav ul li.middle {
+	background-position: 0 -50px;
+	margin-left: -20px;
+	padding-right: 30px;
+	padding-left: 22px;
+}
+div.form-nav ul li.middle-current {
+	background-position: 0 -200px;
+	margin-left: -20px;
+	padding-right: 30px;
+	padding-left: 22px;
+	font-size: 16px;
+}
+div.form-nav ul li.last {
+	background-position: 0 -100px;
+	margin-left: -20px;
+	padding-left: 22px;
+	position: relative;
+}
+div.form-nav ul li.last span.hook {
+	position: absolute;
+	top: 0;
+	right: -20px;
+	width: 20px;
+	height: 29px;
+	display: block;
+	background: url(step_arrow.gif) no-repeat right -100px;
+}
+div.form-nav ul li.last-current {
+	background-position: 0 -250px;
+	margin-left: -20px;
+	padding-left: 22px;
+	position: relative;
+	font-size: 16px;
+}
+div.form-nav ul li.last-current span.hook {
+	position: absolute;
+	top: 0;
+	right: -20px;
+	width: 20px;
+	height: 29px;
+	display: block;
+	background: url(step_arrow.gif) no-repeat right -250px;
+}
+
+.codegen{
+margin:10px;
+}
+.xoblktpl{
+padding:3px;
+width:100%;
+height:200px;
+border:1px dashed #ccc;
+}
+.xoblk{
+padding:3px;
+width:100%;
+height:50px;
+border:1px dashed #ccc;
+}

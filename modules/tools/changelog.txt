@@ -1,0 +1,15 @@
+
+tools for xoops Changelog
+
+============================
+2009/04/03: Version 2.0 beta1
+============================
+
+-modulize callback in tools module (ezsky)
+-add blocks callback in xoopsplugin of smarty (Hu Zhenghui)
+
+============================
+2009/03/14: Version 1.0 beta1
+============================
+
+-add updatecache  (ezsky)
