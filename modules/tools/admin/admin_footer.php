@@ -1,4 +1,5 @@
 <?php
+
 /**
  * tools Module for XOOPS
  *
@@ -15,8 +16,7 @@
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-
 if (isset($template_main)) {
-//    $xoopsTpl->display("db:{$template_main}");
+    $xoopsTpl->display("db:{$template_main}");
 }
 xoops_cp_footer();
