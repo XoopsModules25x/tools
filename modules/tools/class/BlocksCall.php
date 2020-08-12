@@ -1,4 +1,7 @@
 <?php
+
+namespace XoopsModules\Tools;
+
 /**
  * tools Module for XOOPS
  *
@@ -15,16 +18,8 @@
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-defined('XOOPS_ROOT_PATH') || exit('XOOPS Root Path not defined');
-
-/**
- * Class ToolsBlocksCall
- */
-class ToolsBlocksCall extends XoopsObject
+class BlocksCall extends \XoopsObject
 {
-    /**
-     * ToolsBlocksCall constructor.
-     */
     public function __construct()
     {
         $this->initVar('bid', XOBJ_DTYPE_INT, null, true);
@@ -46,7 +41,6 @@ class ToolsBlocksCall extends XoopsObject
 
     /**
      * gets html form for editting block options
-     *
      */
     public function getOptions()
     {
@@ -55,10 +49,10 @@ class ToolsBlocksCall extends XoopsObject
         if (!$edit_func) {
             return false;
         }
-        if (file_exists(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/blocks/' . $this->getVar('func_file'))) {
-            if (file_exists(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/' . $xoopsConfig['language'] . '/blocks.php')) {
+        if (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/blocks/' . $this->getVar('func_file'))) {
+            if (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/' . $xoopsConfig['language'] . '/blocks.php')) {
                 require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/' . $xoopsConfig['language'] . '/blocks.php';
-            } elseif (file_exists(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/english/blocks.php')) {
+            } elseif (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/english/blocks.php')) {
                 require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/english/blocks.php';
             }
             require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/blocks/' . $this->getVar('func_file');
@@ -72,20 +66,5 @@ class ToolsBlocksCall extends XoopsObject
         }
 
         return false;
-    }
-}
-
-/**
- * Class ToolsBlocksCallHandler
- */
-class ToolsBlocksCallHandler extends XoopsPersistableObjectHandler
-{
-    /**
-     * ToolsBlocksCallHandler constructor.
-     * @param null|\XoopsDatabase $db
-     */
-    public function __construct($db)
-    {
-        parent::__construct($db, 'tools_blocks', 'ToolsBlocksCall', 'bid', 'name');
     }
 }

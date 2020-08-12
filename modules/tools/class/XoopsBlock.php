@@ -1,4 +1,7 @@
 <?php
+
+namespace XoopsModules\Tools;
+
 /**
  * tools Module for XOOPS
  *
@@ -15,17 +18,8 @@
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-
-defined('XOOPS_ROOT_PATH') || exit('XOOPS Root Path not defined');
-
-/**
- * Class ToolsXoopsBlock
- */
-class ToolsXoopsBlock extends XoopsObject
+class XoopsBlock extends \XoopsObject
 {
-    /**
-     * ToolsXoopsBlock constructor.
-     */
     public function __construct()
     {
         $this->initVar('bid', XOBJ_DTYPE_INT, null, false);
@@ -57,20 +51,5 @@ class ToolsXoopsBlock extends XoopsObject
         $this->initVar('template', XOBJ_DTYPE_OTHER, null, false);
         $this->initVar('bcachetime', XOBJ_DTYPE_INT, 0, false);
         $this->initVar('last_modified', XOBJ_DTYPE_INT, 0, false);
-    }
-}
-
-/**
- * Class ToolsXoopsBlockHandler
- */
-class ToolsXoopsBlockHandler extends XoopsPersistableObjectHandler
-{
-    /**
-     * ToolsXoopsBlockHandler constructor.
-     * @param null|\XoopsDatabase $db
-     */
-    public function __construct($db)
-    {
-        parent::__construct($db, 'newblocks', 'ToolsXoopsBlock', 'bid', 'name');
     }
 }

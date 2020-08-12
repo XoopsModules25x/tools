@@ -9,7 +9,8 @@ div.form-nav {
 div.form-nav ul li {
     height: 29px;
     float: left;
-    background: url(step_arrow.gif) no-repeat;
+    background-image: url(step_arrow.gif);
+    background-repeat: no-repeat;
     color: #fff;
     font-size: 14px;
     font-weight: bold;
@@ -88,7 +89,7 @@ div.form-nav ul li.last-current span.hook {
     margin: 10px;
 }
 
-.xoBlkTpl {
+.xoblktpl {
     padding: 3px;
     width: 100%;
     height: 200px;

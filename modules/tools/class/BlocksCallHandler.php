@@ -1,5 +1,7 @@
 <?php
 
+namespace XoopsModules\Tools;
+
 /**
  * tools Module for XOOPS
  *
@@ -16,24 +18,12 @@
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-define('_MI_TOOLS_NAME', 'Xoops Tools');
-define('_MI_TOOLS_DESC', 'A tools module for XOOPS');
-//menu
-define('_MI_TOOLS_INDEX', 'Clear cache');
-define('_MI_TOOLS_BLOCKS', 'Block callback');
-define('_MI_TOOLS_MENU_HOME', 'Home');
-define('_MI_TOOLS_MENU_ABOUT', 'About');
 
-//Help
-define('_MI_TOOLS_DIRNAME', basename(dirname(dirname(__DIR__))));
-define('_MI_TOOLS_HELP_HEADER', __DIR__ . '/help/helpheader.tpl');
-define('_MI_TOOLS_BACK_2_ADMIN', 'Back to Administration of ');
-define('_MI_TOOLS_OVERVIEW', 'Overview');
 
-//define('_MI_TOOLS_HELP_DIR', __DIR__);
-
-//help multi-page
-define('_MI_TOOLS_DISCLAIMER', 'Disclaimer');
-define('_MI_TOOLS_LICENSE', 'License');
-define('_MI_TOOLS_SUPPORT', 'Support');
-
+class BlocksCallHandler extends \XoopsPersistableObjectHandler
+{
+    public function __construct(\XoopsDatabase $db)
+    {
+        parent::__construct($db, 'tools_blocks', BlocksCall::class, 'bid', 'name');
+    }
+}
