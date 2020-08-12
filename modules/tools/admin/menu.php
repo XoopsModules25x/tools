@@ -16,6 +16,7 @@
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
 
+use Xmf\Module\Admin;
 use XoopsModules\Tools;
 
 include dirname(__DIR__) . '/preloads/autoloader.php';
@@ -27,7 +28,7 @@ $helper = Tools\Helper::getInstance();
 $helper->loadLanguage('common');
 $helper->loadLanguage('feedback');
 
-$pathIcon32 = \Xmf\Module\Admin::menuIconPath('');
+$pathIcon32 = Admin::menuIconPath('');
 if (is_object($helper->getModule())) {
     $pathModIcon32 = $helper->getModule()->getInfo('modicons32');
 }

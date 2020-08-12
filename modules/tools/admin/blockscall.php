@@ -18,6 +18,7 @@
  */
 
 use Xmf\Module\Admin;
+use Xmf\Request;
 
 require __DIR__ . '/admin_header.php';
 xoops_cp_header();
@@ -26,7 +27,7 @@ xoops_cp_header();
 /** @var Admin $adminObject */
 $adminObject->displayNavigation(basename(__FILE__));
 
-$op                = isset($_REQUEST['op']) ? $_REQUEST['op'] : 'list';
+$op                = $_REQUEST['op'] ?? 'list';
 $blocksCallHandler = $helper->getHandler('BlocksCall');
 switch ($op) {
     default:
@@ -78,7 +79,7 @@ switch ($op) {
         unset($criteria);
         $generator_list[-1] = _AM_TOOLS_BC_ALLTYPES;
         ksort($generator_list);
-        $selgen = \Xmf\Request::getInt('selgen', -1, 'GET');
+        $selgen = Request::getInt('selgen', -1, 'GET');
 
         //get blocks
         $criteria = new \CriteriaCompo(new \Criteria('mid', 0, '!='));
@@ -180,8 +181,8 @@ EOF;
         break;
     case 'save':
         $blocksCallObj = $blocksCallHandler->get($_REQUEST['bid']);
-        if (\Xmf\Request::hasVar('save', 'REQUEST') && 'blk' === $_REQUEST['save']) {
-            if (\Xmf\Request::hasVar('options', 'REQUEST')) {
+        if (Request::hasVar('save', 'REQUEST') && 'blk' === $_REQUEST['save']) {
+            if (Request::hasVar('options', 'REQUEST')) {
                 $options       = $_REQUEST['options'];
                 $options_count = count($options);
                 if ($options_count > 0) {
@@ -198,7 +199,7 @@ EOF;
             $blocksCallObj->setVar('desciption', $_REQUEST['desc']);
             $blocksCallObj->setVar('bcachetime', $_REQUEST['bcachetime']);
             $blocksCallObj->setVar('bcachemodel', $_REQUEST['bcachemodel']);
-        } elseif (\Xmf\Request::hasVar('save', 'REQUEST') && 'tpl' === $_REQUEST['save']) {
+        } elseif (Request::hasVar('save', 'REQUEST') && 'tpl' === $_REQUEST['save']) {
             $blocksCallObj->setVar('tpl_content', $_REQUEST['tpl_content']);
         } else {
             exit();
@@ -226,7 +227,7 @@ EOF;
         break;
     case 'delete':
         $blocksCallObj = $blocksCallHandler->get($_REQUEST['bid']);
-        if (\Xmf\Request::hasVar('ok', 'REQUEST') && 1 == $_REQUEST['ok']) {
+        if (Request::hasVar('ok', 'REQUEST') && 1 == $_REQUEST['ok']) {
             if (!$GLOBALS['xoopsSecurity']->check()) {
                 redirect_header('blockscall.php', 3, implode(',', $GLOBALS['xoopsSecurity']->getErrors()));
             }

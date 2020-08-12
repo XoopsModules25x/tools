@@ -39,7 +39,7 @@ $modversion['modicons32']          = 'assets/images/icons/32';
 $modversion['image']               = 'assets/images/logoModule.png';
 $modversion['module_website_url']  = 'https://xoops.org';
 $modversion['module_website_name'] = 'XOOPS';
-$modversion['min_php']             = '7.1';
+$modversion['min_php']             = '7.0';
 $modversion['min_xoops']           = '2.5.10';
 $modversion['min_admin']           = '1.2';
 $modversion['min_db']              = ['mysql' => '5.5'];
@@ -47,9 +47,9 @@ $modversion['system_menu']         = 1;
 
 // database tables, not applicable for this module
 $modversion['sqlfile']['mysql'] = 'sql/sql.sql';
-$modversion['tables']           = array(
+$modversion['tables']           = [
     $moduleDirName . '_' . 'blocks',
-);
+];
 
 // Admin things, not applicable for this module
 $modversion['hasAdmin']   = 1;

@@ -27,7 +27,7 @@ xoops_cp_header();
 /** @var Admin $adminObject */
 $adminObject->displayNavigation(basename(__FILE__));
 
-$op = isset($_REQUEST['op']) ? $_REQUEST['op'] : 'main';
+$op = $_REQUEST['op'] ?? 'main';
 switch ($op) {
     default:
     case 'main':
