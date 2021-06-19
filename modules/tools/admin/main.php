@@ -93,6 +93,10 @@ EOF;
         break;
 }
 
+/**
+ * @param $cacheDir
+ * @param $type
+ */
 function updatecache($cacheDir, $type)
 {
     $d = dir($cacheDir);

@@ -18,10 +18,11 @@ namespace XoopsModules\Tools;
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-
-
 class BlocksCallHandler extends \XoopsPersistableObjectHandler
 {
+    /**
+     * @param \XoopsDatabase $db
+     */
     public function __construct(\XoopsDatabase $db)
     {
         parent::__construct($db, 'tools_blocks', BlocksCall::class, 'bid', 'name');
