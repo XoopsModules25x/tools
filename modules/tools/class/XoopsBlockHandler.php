@@ -2,6 +2,9 @@
 
 namespace XoopsModules\Tools;
 
+use XoopsDatabase;
+use XoopsPersistableObjectHandler;
+
 /**
  * tools Module for XOOPS
  *
@@ -18,10 +21,9 @@ namespace XoopsModules\Tools;
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-
-class XoopsBlockHandler extends \XoopsPersistableObjectHandler
+class XoopsBlockHandler extends XoopsPersistableObjectHandler
 {
-    public function __construct(\XoopsDatabase $db)
+    public function __construct(XoopsDatabase $db)
     {
         parent::__construct($db, 'newblocks', XoopsBlock::class, 'bid', 'name');
     }

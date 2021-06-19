@@ -2,6 +2,8 @@
 
 namespace XoopsModules\Tools;
 
+use XoopsObject;
+
 /**
  * tools Module for XOOPS
  *
@@ -18,7 +20,7 @@ namespace XoopsModules\Tools;
  * @since           2.00
  * @author          Susheng Yang <ezskyyoung@gmail.com>
  */
-class XoopsBlock extends \XoopsObject
+class XoopsBlock extends XoopsObject
 {
     public function __construct()
     {

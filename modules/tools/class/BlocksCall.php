@@ -50,11 +50,8 @@ class BlocksCall extends \XoopsObject
             return false;
         }
         if (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/blocks/' . $this->getVar('func_file'))) {
-            if (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/' . $xoopsConfig['language'] . '/blocks.php')) {
-                require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/' . $xoopsConfig['language'] . '/blocks.php';
-            } elseif (is_file(XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/english/blocks.php')) {
-                require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/language/english/blocks.php';
-            }
+            xoops_loadLanguage('blocks', $this->getVar('dirname'));
+
             require_once XOOPS_ROOT_PATH . '/modules/' . $this->getVar('dirname') . '/blocks/' . $this->getVar('func_file');
             $options   = explode('|', $this->getVar('options'));
             $edit_form = $edit_func($options);
