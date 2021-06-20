@@ -3,7 +3,7 @@
 
     <h4 class="odd">DESCRIPTION</h4> <br>
 
-    <p class="even">This module is ....<br> <br>
+    <p class="even">This module is for clearing cache, and for adding blocks<br> <br>
     </p>
 
     <h4 class="odd">INSTALL/UNINSTALL</h4>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XoopsModules\Tools\Common;
 
 /*
@@ -17,18 +19,21 @@ namespace XoopsModules\Tools\Common;
 
 /**
  *
- * @license      https://www.fsf.org/copyleft/gpl.html GNU public license
- * @copyright    https://xoops.org 2000-2020 &copy; XOOPS Project
+ * @copyright    {@link https://xoops.org/ XOOPS Project}
+ * @license      GNU GPL2orlater(https://www.gnu.org/licenses/gpl-2.0.html)
+ * @author       XOOPS Development Team <https://xoops.org>
  * @author       ZySpec <zyspec@yahoo.com>
  * @author       Mamba <mambax7@gmail.com>
  */
 
+use Xmf\Request;
 use MyTextSanitizer;
 use XoopsFormDhtmlTextArea;
 use XoopsFormEditor;
 use XoopsFormTextArea;
-use XoopsModules\Tools;
-use XoopsModules\Tools\Helper;
+use XoopsModules\Tools\{
+    Helper
+};
 
 
 
@@ -37,17 +42,166 @@ use XoopsModules\Tools\Helper;
  */
 class SysUtility
 {
-    use VersionChecks;
+    use VersionChecks; //checkVerXoops, checkVerPhp Traits
+    use ServerStats; // getServerStats Trait
+    use FilesManagement; // Files Management Trait
 
-    //checkVerXoops, checkVerPhp Traits
+    //--------------- Common module methods -----------------------------
 
-    use ServerStats;
+    /**
+     * Access the only instance of this class
+ *
+     * @return SysUtility
+*
+     */
+    public static function getInstance(): SysUtility
+    {
+        static $instance;
+        if (null === $instance) {
+            $instance = new static();
+        }
 
-    // getServerStats Trait
+        return $instance;
+    }
 
-    use FilesManagement;
+    /**
+     * @param $text
+     * @param $form_sort
+     * @return string
+     */
+    public static function selectSorting($text, $form_sort): string
+    {
+        global $start, $order, $sort;
 
-    // Files Management Trait
+        $select_view   = '';
+        $moduleDirName = \basename(\dirname(__DIR__));
+        $helper = Helper::getInstance();
+
+        //$pathModIcon16 = XOOPS_URL . '/modules/' . $moduleDirName . '/' . $helper->getConfig('modicons16');
+        $pathModIcon16 = $helper->url($helper->getModule()->getInfo('modicons16'));
+
+        $select_view = '<form name="form_switch" id="form_switch" action="' . Request::getString('REQUEST_URI', '', 'SERVER') . '" method="post"><span style="font-weight: bold;">' . $text . '</span>';
+        //$sorts =  $sort ==  'asc' ? 'desc' : 'asc';
+        if ($form_sort == $sort) {
+            $sel1 = 'asc' === $order ? 'selasc.png' : 'asc.png';
+            $sel2 = 'desc' === $order ? 'seldesc.png' : 'desc.png';
+        } else {
+            $sel1 = 'asc.png';
+            $sel2 = 'desc.png';
+        }
+        $select_view .= '  <a href="' . Request::getString('SCRIPT_NAME', '', 'SERVER') . '?start=' . $start . '&sort=' . $form_sort . '&order=asc"><img src="' . $pathModIcon16 . '/' . $sel1 . '" title="ASC" alt="ASC"></a>';
+        $select_view .= '<a href="' . Request::getString('SCRIPT_NAME', '', 'SERVER') . '?start=' . $start . '&sort=' . $form_sort . '&order=desc"><img src="' . $pathModIcon16 . '/' . $sel2 . '" title="DESC" alt="DESC"></a>';
+        $select_view .= '</form>';
+
+        return $select_view;
+    }
+
+    /***************Blocks***************/
+    /**
+     * @param array $cats
+     * @return string
+     */
+    public static function blockAddCatSelect(array $cats): string
+    {
+        $cat_sql = '';
+        if (\is_array($cats) && !empty($cats)) {
+            $cat_sql = '(' . \current($cats);
+            \array_shift($cats);
+            foreach ($cats as $cat) {
+                $cat_sql .= ',' . $cat;
+            }
+            $cat_sql .= ')';
+        }
+
+        return $cat_sql;
+    }
+
+    /**
+     * @param $content
+     */
+    public static function metaKeywords($content): void
+    {
+        global $xoopsTpl, $xoTheme;
+        $myts    = \MyTextSanitizer::getInstance();
+        $content = $myts->undoHtmlSpecialChars($myts->displayTarea($content));
+        if (\is_object($xoTheme)) {
+            $xoTheme->addMeta('meta', 'keywords', \strip_tags($content));
+        } else {    // Compatibility for old Xoops versions
+            $xoopsTpl->assign('xoops_metaKeywords', \strip_tags($content));
+        }
+    }
+
+    /**
+     * @param $content
+     */
+    public static function metaDescription($content): void
+    {
+        global $xoopsTpl, $xoTheme;
+        $myts    = \MyTextSanitizer::getInstance();
+        $content = $myts->undoHtmlSpecialChars($myts->displayTarea($content));
+        if (\is_object($xoTheme)) {
+            $xoTheme->addMeta('meta', 'description', \strip_tags($content));
+        } else {    // Compatibility for old Xoops versions
+            $xoopsTpl->assign('xoops_metaDescription', \strip_tags($content));
+        }
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $columnName
+     *
+     * @return array
+     */
+    public static function enumerate(string $tableName, string $columnName): array
+    {
+        $table = $GLOBALS['xoopsDB']->prefix($tableName);
+
+        //    $result = $GLOBALS['xoopsDB']->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS
+        //        WHERE TABLE_NAME = '" . $table . "' AND COLUMN_NAME = '" . $columnName . "'")
+        //    || exit ($GLOBALS['xoopsDB']->error());
+
+        $sql    = 'SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "' . $table . '" AND COLUMN_NAME = "' . $columnName . '"';
+        $result = $GLOBALS['xoopsDB']->query($sql);
+        if (!$result) {
+            exit($GLOBALS['xoopsDB']->error());
+        }
+
+        $row      = $GLOBALS['xoopsDB']->fetchBoth($result);
+        $enumList = \explode(',', \str_replace("'", '', \mb_substr($row['COLUMN_TYPE'], 5, - 6)));
+        return $enumList;
+    }
+
+
+    /**
+     * @param array|string $tableName
+     * @param int          $id_field
+     * @param int          $id
+     *
+     * @return mixed
+     */
+    public static function cloneRecord($tableName, int $id_field, int $id)
+    {
+        $new_id = false;
+        $table  = $GLOBALS['xoopsDB']->prefix($tableName);
+        // copy content of the record you wish to clone
+        $sql       = "SELECT * FROM $table WHERE $id_field='$id' ";
+        $tempTable = $GLOBALS['xoopsDB']->fetchArray($GLOBALS['xoopsDB']->query($sql), \MYSQLI_ASSOC);
+        if (!$tempTable) {
+            exit($GLOBALS['xoopsDB']->error());
+        }
+        // set the auto-incremented id's value to blank.
+        unset($tempTable[$id_field]);
+        // insert cloned copy of the original  record
+        $sql    = "INSERT INTO $table (" . \implode(', ', \array_keys($tempTable)) . ") VALUES ('" . \implode("', '", \array_values($tempTable)) . "')";
+        $result = $GLOBALS['xoopsDB']->queryF($sql);
+        if (!$result) {
+            exit($GLOBALS['xoopsDB']->error());
+        }
+        // Return the new id
+        $new_id = $GLOBALS['xoopsDB']->getInsertId();
+
+        return $new_id;
+    }
 
     /**
      * truncateHtml can truncate a string up to a number of characters while preserving whole words and HTML tags
@@ -62,59 +216,60 @@ class SysUtility
      *
      * @return string Trimmed string.
      */
-    public static function truncateHtml($text, $length = 100, $ending = '...', $exact = false, $considerHtml = true)
+    public static function truncateHtml(string $text, int $length = 100, string $ending = '...', bool $exact = false, bool $considerHtml = true): string
     {
+        $openTags = [];
         if ($considerHtml) {
             // if the plain text is shorter than the maximum length, return the whole text
-            if (mb_strlen(preg_replace('/<.*?' . '>/', '', $text)) <= $length) {
+            if (\mb_strlen(\preg_replace('/<.*?' . '>/', '', $text)) <= $length) {
                 return $text;
             }
             // splits all html-tags to scanable lines
-            preg_match_all('/(<.+?' . '>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
-            $total_length = mb_strlen($ending);
-            $open_tags    = [];
+            \preg_match_all('/(<.+?' . '>)?([^<>]*)/s', $text, $lines, \PREG_SET_ORDER);
+            $total_length = \mb_strlen($ending);
+            //$openTags    = [];
             $truncate     = '';
             foreach ($lines as $line_matchings) {
                 // if there is any html-tag in this line, handle it and add it (uncounted) to the output
                 if (!empty($line_matchings[1])) {
                     // if it's an "empty element" with or without xhtml-conform closing slash
-                    if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
+                    if (\preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
                         // do nothing
                         // if tag is a closing tag
-                    } elseif (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-                        // delete tag from $open_tags list
-                        $pos = array_search($tag_matchings[1], $open_tags, true);
+                    } elseif (\preg_match('/^<\s*\/(\S+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+                        // delete tag from $openTags list
+                        $pos = \array_search($tag_matchings[1], $openTags, true);
                         if (false !== $pos) {
-                            unset($open_tags[$pos]);
+                            unset($openTags[$pos]);
                         }
                         // if tag is an opening tag
-                    } elseif (preg_match('/^<\s*([^\s>!]+).*?' . '>$/s', $line_matchings[1], $tag_matchings)) {
-                        // add tag to the beginning of $open_tags list
-                        array_unshift($open_tags, mb_strtolower($tag_matchings[1]));
+                    } elseif (\preg_match('/^<\s*([^\s>!]+).*?' . '>$/s', $line_matchings[1], $tag_matchings)) {
+                        // add tag to the beginning of $openTags list
+                        \array_unshift($openTags, \mb_strtolower($tag_matchings[1]));
                     }
                     // add html-tag to $truncate'd text
                     $truncate .= $line_matchings[1];
                 }
                 // calculate the length of the plain text part of the line; handle entities as one character
-                $content_length = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
+                $content_length = \mb_strlen(\preg_replace('/&[0-9a-z]{2,8};|&#\d{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
                 if ($total_length + $content_length > $length) {
                     // the number of characters which are left
                     $left            = $length - $total_length;
                     $entities_length = 0;
                     // search for html entities
-                    if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
+                    if (\preg_match_all('/&[0-9a-z]{2,8};|&#\d{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, \PREG_OFFSET_CAPTURE)) {
                         // calculate the real length of all entities in the legal range
                         foreach ($entities[0] as $entity) {
                             if ($left >= $entity[1] + 1 - $entities_length) {
                                 $left--;
-                                $entities_length += mb_strlen($entity[0]);
+                                $entities_length += \mb_strlen($entity[0]);
                             } else {
                                 // no more characters left
                                 break;
                             }
                         }
                     }
-                    $truncate .= mb_substr($line_matchings[2], 0, $left + $entities_length);
+                    $truncate .= \mb_substr($line_matchings[2], 0, $left + $entities_length);
                     // maximum lenght is reached, so get off the loop
                     break;
                 }
@@ -127,10 +282,10 @@ class SysUtility
                 }
             }
         } else {
-            if (mb_strlen($text) <= $length) {
+            if (\mb_strlen($text) <= $length) {
                 return $text;
             }
-            $truncate = mb_substr($text, 0, $length - mb_strlen($ending));
+            $truncate = \mb_substr($text, 0, $length - mb_strlen($ending));
         }
         // if the words shouldn't be cut in the middle...
         if (!$exact) {
@@ -138,14 +293,14 @@ class SysUtility
             $spacepos = mb_strrpos($truncate, ' ');
             if (isset($spacepos)) {
                 // ...and cut the text in this position
-                $truncate = mb_substr($truncate, 0, $spacepos);
+                $truncate = \mb_substr($truncate, 0, $spacepos);
             }
         }
         // add the defined ending to the text
         $truncate .= $ending;
         if ($considerHtml) {
             // close all unclosed html-tags
-            foreach ($open_tags as $tag) {
+            foreach ($openTags as $tag) {
                 $truncate .= '</' . $tag . '>';
             }
         }
@@ -154,11 +309,11 @@ class SysUtility
     }
 
     /**
-     * @param \Xmf\Module\Helper $helper
-     * @param array|null         $options
+     * @param \Xmf\Module\Helper|null $helper
+     * @param array|null              $options
      * @return \XoopsFormDhtmlTextArea|\XoopsFormEditor
      */
-    public static function getEditor($helper = null, $options = null)
+    public static function getEditor($helper = null, array $options = null)
     {
         /** @var Helper $helper */
         if (null === $options) {
@@ -177,14 +332,14 @@ class SysUtility
 
         $isAdmin = $helper->isUserAdmin();
 
-        if (class_exists('XoopsFormEditor')) {
+        if (\class_exists('XoopsFormEditor')) {
             if ($isAdmin) {
-                $descEditor = new XoopsFormEditor(ucfirst($options['name']), $helper->getConfig('editorAdmin'), $options, $nohtml = false, $onfailure = 'textarea');
+                $descEditor = new \XoopsFormEditor(\ucfirst($options['name']), $helper->getConfig('editorAdmin'), $options, $nohtml = false, $onfailure = 'textarea');
             } else {
-                $descEditor = new XoopsFormEditor(ucfirst($options['name']), $helper->getConfig('editorUser'), $options, $nohtml = false, $onfailure = 'textarea');
+                $descEditor = new \XoopsFormEditor(\ucfirst($options['name']), $helper->getConfig('editorUser'), $options, $nohtml = false, $onfailure = 'textarea');
             }
         } else {
-            $descEditor = new \XoopsFormDhtmlTextArea(ucfirst($options['name']), $options['name'], $options['value'], '100%', '100%');
+            $descEditor = new \XoopsFormDhtmlTextArea(\ucfirst($options['name']), $options['name'], $options['value'], '100%', '100%');
         }
 
         //        $form->addElement($descEditor);
@@ -193,12 +348,12 @@ class SysUtility
     }
 
     /**
-     * @param $fieldname
-     * @param $table
+     * @param string $fieldname
+     * @param string $table
      *
      * @return bool
      */
-    public static function fieldExists($fieldname, $table)
+    public static function fieldExists(string $fieldname, string $table): bool
     {
         global $xoopsDB;
         $result = $xoopsDB->queryF("SHOW COLUMNS FROM   $table LIKE '$fieldname'");
@@ -207,34 +362,20 @@ class SysUtility
     }
 
     /**
-     * @param array|string $tableName
-     * @param int          $id_field
-     * @param int          $id
+     * Function responsible for checking if a directory exists, we can also write in and create an index.html file
      *
-     * @return mixed
+     * @param string $folder The full path of the directory to check
      */
-    public static function cloneRecord($tableName, $id_field, $id)
+    public static function prepareFolder(string $folder): void
     {
-        $new_id = false;
-        $table  = $GLOBALS['xoopsDB']->prefix($tableName);
-        // copy content of the record you wish to clone
-        $sql       = "SELECT * FROM $table WHERE $id_field='$id' ";
-        $tempTable = $GLOBALS['xoopsDB']->fetchArray($GLOBALS['xoopsDB']->query($sql), MYSQLI_ASSOC);
-        if (!$tempTable) {
-            exit($GLOBALS['xoopsDB']->error());
+        try {
+            if (!@\mkdir($folder) && !\is_dir($folder)) {
+                throw new \RuntimeException(\sprintf('Unable to create the %s directory', $folder));
+            }
+            file_put_contents($folder . '/index.html', '<script>history.go(-1);</script>');
+        } catch (\Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n", '<br>';
         }
-        // set the auto-incremented id's value to blank.
-        unset($tempTable[$id_field]);
-        // insert cloned copy of the original  record
-        $sql    = "INSERT INTO $table (" . implode(', ', array_keys($tempTable)) . ") VALUES ('" . implode("', '", array_values($tempTable)) . "')";
-        $result = $GLOBALS['xoopsDB']->queryF($sql);
-        if (!$result) {
-            exit($GLOBALS['xoopsDB']->error());
-        }
-        // Return the new id
-        $new_id = $GLOBALS['xoopsDB']->getInsertId();
-
-        return $new_id;
     }
 
     /**
@@ -242,10 +383,28 @@ class SysUtility
      *
      * @return bool
      */
-    public static function tableExists($tablename)
+    public static function tableExists(string $tablename): bool
     {
+        $trace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        \trigger_error(__FUNCTION__ . " is deprecated, called from {$trace[0]['file']} line {$trace[0]['line']}");
+        $GLOBALS['xoopsLogger']->addDeprecated(
+            \basename(\dirname(__DIR__, 2)) . ' Module: ' . __FUNCTION__ . ' function is deprecated, please use Xmf\Database\Tables method(s) instead.' . " Called from {$trace[0]['file']}line {$trace[0]['line']}"
+        );
         $result = $GLOBALS['xoopsDB']->queryF("SHOW TABLES LIKE '$tablename'");
 
-        return ($GLOBALS['xoopsDB']->getRowsNum($result) > 0) ? true : false;
+        return $GLOBALS['xoopsDB']->getRowsNum($result) > 0;
+    }
+
+    /**
+     * Add a field to a mysql table
+     *
+     * @param $field
+     * @param $table
+     * @return bool|\mysqli_result
+     */
+    public static function addField($field, $table)
+    {
+        global $xoopsDB;
+        return $xoopsDB->queryF('ALTER TABLE ' . $table . " ADD $field;");
     }
 }

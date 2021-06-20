@@ -23,6 +23,9 @@ trait FilesManagement
      * Function responsible for checking if a directory exists, we can also write in and create an index.html file
      *
      * @param string $folder The full path of the directory to check
+     *
+     * @throws \RuntimeException
+     * @return void
      */
     public static function createFolder($folder)
     {
@@ -73,14 +76,60 @@ trait FilesManagement
     }
 
     /**
+     * Copy a file, or recursively copy a folder and its contents
+     * @author      Aidan Lister <aidan@php.net>
+     * @version     1.0.1
+     * @link        http://aidanlister.com/2004/04/recursively-copying-directories-in-php/
+     * @param       string $source Source path
+     * @param       string $dest   Destination path
+     * @return      bool     Returns true on success, false on failure
+     */
+    public static function xcopy($source, $dest)
+    {
+        // Check for symlinks
+        if (is_link($source)) {
+            return symlink(readlink($source), $dest);
+        }
+
+        // Simple copy for a file
+        if (is_file($source)) {
+            return copy($source, $dest);
+        }
+
+        // Make destination directory
+        if (!is_dir($dest)) {
+            if (!mkdir($dest) && !is_dir($dest)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $dest));
+            }
+        }
+
+        // Loop through the folder
+        $dir = dir($source);
+        if (@is_dir($dir)) {
+            while (false !== $entry = $dir->read()) {
+                // Skip pointers
+                if ('.' === $entry || '..' === $entry) {
+                    continue;
+                }
+                // Deep copy directories
+                self::xcopy("$source/$entry", "$dest/$entry");
+            }
+            // Clean up
+            $dir->close();
+        }
+
+        return true;
+    }
+
+    /**
      * Remove files and (sub)directories
      *
      * @param string $src source directory to delete
      *
-     * @return bool true on success
+     * @uses \Xmf\Module\Helper::getHelper()
      * @uses \Xmf\Module\Helper::isUserAdmin()
      *
-     * @uses \Xmf\Module\Helper::getHelper()
+     * @return bool true on success
      */
     public static function deleteDirectory($src)
     {
@@ -103,8 +152,8 @@ trait FilesManagement
                         break;
                     }
                 } elseif (!($success = \unlink($fileInfo->getRealPath()))) {
-                        break;
-                    }
+                    break;
+                }
             }
             // now delete this (sub)directory if all the files are gone
             if ($success) {
@@ -205,10 +254,10 @@ trait FilesManagement
      * @param string $src  - Source of files being moved
      * @param string $dest - Destination of files being moved
      *
-     * @return bool true on success
+     * @uses \Xmf\Module\Helper::getHelper()
      * @uses \Xmf\Module\Helper::isUserAdmin()
      *
-     * @uses \Xmf\Module\Helper::getHelper()
+     * @return bool true on success
      */
     public static function rcopy($src, $dest)
     {

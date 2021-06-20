@@ -19,7 +19,7 @@
 defined('XOOPS_ROOT_PATH') || exit('Restricted access');
 
 $moduleDirName      = basename(__DIR__);
-$moduleDirNameUpper = mb_strtoupper($moduleDirName);
+$moduleDirNameUpper = \mb_strtoupper($moduleDirName);
 
 $modversion                        = [];
 $modversion['version']             = '2.1';

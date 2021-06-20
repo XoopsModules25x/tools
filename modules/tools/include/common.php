@@ -21,7 +21,7 @@ use XoopsModules\Tools;
 require_once dirname(__DIR__) . '/preloads/autoloader.php';
 
 $moduleDirName      = \basename(\dirname(__DIR__));
-$moduleDirNameUpper = mb_strtoupper($moduleDirName); //$capsDirName
+$moduleDirNameUpper = \mb_strtoupper($moduleDirName); //$capsDirName
 
 /** @var \XoopsDatabase $db */
 /** @var Tools\Helper $helper */

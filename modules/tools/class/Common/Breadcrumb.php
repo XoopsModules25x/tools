@@ -17,15 +17,15 @@ namespace XoopsModules\Tools\Common;
  * @copyright   XOOPS Project (https://xoops.org)
  * @license     http://www.fsf.org/copyleft/gpl.html GNU public license
  * @author      lucio <lucio.rota@gmail.com>
- * @package     tools
  *
  * Example:
- * $breadcrumb = new PedigreeBreadcrumb();
+ * $breadcrumb = new Common\Breadcrumb();
  * $breadcrumb->addLink( 'bread 1', 'index1.php' );
  * $breadcrumb->addLink( 'bread 2', '' );
  * $breadcrumb->addLink( 'bread 3', 'index3.php' );
  * echo $breadcrumb->render();
  */
+use XoopsModules\Tools;
 
 /**
  * Class Breadcrumb
