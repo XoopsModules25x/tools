@@ -9,13 +9,12 @@
  * how to use
  * The following code inserted in the template
  *  
- * @param module string module dirname
- * @param file  string block function file
- * @param show_func string show block function
- * @param options= string show block function's option
- * @param template string show block function's template
- * @param cachetime int  cachetime Unit for seconds 
- * @param user mix Generate cache solution
+ * @param string $module module dirname
+ * @param string $file  block function file
+ * @param string $show_func show block function
+ * @param string $options show block function's option
+ * @param int $cachetime cachetime Unit for seconds
+ * @param mixed $user Generate cache solution
 
 <{xoBlk 
     module="ilog" 
@@ -39,14 +38,14 @@ function smarty_function_xoBlk( $params, $smarty )
         $smarty->caching = 0;
     }
     $tplName = 'db:' . $params['template'];
-    $params['cacheid'] = isset($params['cacheid']) ? $params['cacheid'] : 'xoBlk_'.md5(var_export($params, true));
+    $params['cacheid'] = $params['cacheid'] ?? ('xoBlk_' . md5(var_export($params, true)));
     if (!isset($params['cachetime']) || !$smarty->is_cached($tplName, $params['cacheid'])) {
-        $myBlock = array(
+        $myBlock = [
             'dirname' => $params['module'],
             'func_file' => $params['file'],
             'show_func' => $params['show_func'],
             'options' => $params['options'],
-        );
+        ];
         $xoBlk = new XoopsBlock($myBlock);
         $var = $xoBlk->buildBlock();
         $old_block = $smarty->get_template_vars('block');

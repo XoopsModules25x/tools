@@ -150,7 +150,7 @@ class SysUtility
      * @param string $tableName
      * @param string $columnName
      *
-     * @return array
+     * @return array|false
      */
     public static function enumerate(string $tableName, string $columnName): array
     {
@@ -163,7 +163,10 @@ class SysUtility
         $sql    = 'SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "' . $table . '" AND COLUMN_NAME = "' . $columnName . '"';
         $result = $GLOBALS['xoopsDB']->query($sql);
         if (!$result) {
-            exit($GLOBALS['xoopsDB']->error());
+//            exit($GLOBALS['xoopsDB']->error());
+            $logger     = \XoopsLogger::getInstance();
+            $logger->handleError(\E_USER_WARNING, $sql, __FILE__, __LINE__);
+            return false;
         }
 
         $row      = $GLOBALS['xoopsDB']->fetchBoth($result);
@@ -195,7 +198,10 @@ class SysUtility
         $sql    = "INSERT INTO $table (" . \implode(', ', \array_keys($tempTable)) . ") VALUES ('" . \implode("', '", \array_values($tempTable)) . "')";
         $result = $GLOBALS['xoopsDB']->queryF($sql);
         if (!$result) {
-            exit($GLOBALS['xoopsDB']->error());
+//            exit($GLOBALS['xoopsDB']->error());
+            $logger     = \XoopsLogger::getInstance();
+            $logger->handleError(\E_USER_WARNING, $sql, __FILE__, __LINE__);
+            return false;
         }
         // Return the new id
         $new_id = $GLOBALS['xoopsDB']->getInsertId();
