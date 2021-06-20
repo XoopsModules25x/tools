@@ -12,31 +12,14 @@
 /**
  * @copyright    XOOPS Project (https://xoops.org)
  * @license      GNU GPL 2 or later (https://www.gnu.org/licenses/gpl-2.0.html)
- * @package
  * @author       XOOPS Development Team
  */
-
-use Xmf\Module\Admin;
-use XoopsModules\Tools\{Common,
-    Utility
-};
-
 require_once __DIR__ . '/admin_header.php';
-// Display Admin header
 xoops_cp_header();
-$adminObject = Admin::getInstance();
 
+/** @var Admin $adminObject */
 $adminObject->displayNavigation(basename(__FILE__));
-
-//check for latest release
-//$newRelease = $utility->checkVerModule($helper);
-//if (!empty($newRelease)) {
-//    $adminObject->addItemButton($newRelease[0], $newRelease[1], 'download', 'style="color : Red"');
-//}
-
-$adminObject->displayIndex();
-
-/** @var Utility $utility */
-echo $utility::getServerStats();
+$adminObject::setPaypal('xoopsfoundation@gmail.com');
+$adminObject->displayAbout(false);
 
 require_once __DIR__ . '/admin_footer.php';
