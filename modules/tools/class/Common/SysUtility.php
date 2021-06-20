@@ -152,7 +152,7 @@ class SysUtility
      *
      * @return array|false
      */
-    public static function enumerate(string $tableName, string $columnName): array
+    public static function enumerate(string $tableName, string $columnName)
     {
         $table = $GLOBALS['xoopsDB']->prefix($tableName);
 
@@ -180,17 +180,20 @@ class SysUtility
      * @param int          $id_field
      * @param int          $id
      *
-     * @return mixed
+     * @return int|false
      */
     public static function cloneRecord($tableName, int $id_field, int $id)
     {
         $new_id = false;
+        $logger     = \XoopsLogger::getInstance();
         $table  = $GLOBALS['xoopsDB']->prefix($tableName);
         // copy content of the record you wish to clone
         $sql       = "SELECT * FROM $table WHERE $id_field='$id' ";
         $tempTable = $GLOBALS['xoopsDB']->fetchArray($GLOBALS['xoopsDB']->query($sql), \MYSQLI_ASSOC);
         if (!$tempTable) {
-            exit($GLOBALS['xoopsDB']->error());
+//            exit($GLOBALS['xoopsDB']->error());
+            $logger->handleError(\E_USER_WARNING, $sql, __FILE__, __LINE__);
+            return false;
         }
         // set the auto-incremented id's value to blank.
         unset($tempTable[$id_field]);
@@ -199,7 +202,6 @@ class SysUtility
         $result = $GLOBALS['xoopsDB']->queryF($sql);
         if (!$result) {
 //            exit($GLOBALS['xoopsDB']->error());
-            $logger     = \XoopsLogger::getInstance();
             $logger->handleError(\E_USER_WARNING, $sql, __FILE__, __LINE__);
             return false;
         }
