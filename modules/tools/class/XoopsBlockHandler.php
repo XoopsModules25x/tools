@@ -23,6 +23,9 @@ use XoopsPersistableObjectHandler;
  */
 class XoopsBlockHandler extends XoopsPersistableObjectHandler
 {
+    /**
+     * @param \XoopsDatabase $db
+     */
     public function __construct(XoopsDatabase $db)
     {
         parent::__construct($db, 'newblocks', XoopsBlock::class, 'bid', 'name');
