@@ -22,9 +22,9 @@ $moduleDirName      = basename(__DIR__);
 $moduleDirNameUpper = \mb_strtoupper($moduleDirName);
 
 $modversion                        = [];
-$modversion['version']             = '2.1';
+$modversion['version']             = '2.1.0';
 $modversion['module_status']       = 'Beta 1';
-$modversion['release_date']        = '2021/06/19';
+$modversion['release_date']        = '2022/02/20';
 $modversion['name']                = _MI_TOOLS_NAME;
 $modversion['description']         = _MI_TOOLS_DESC;
 $modversion['image']               = 'assets/images/logoModule.png';
